@@ -9,34 +9,25 @@ class FavoriteMovie extends Model
 {
     use HasFactory;
 
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
     protected $table = 'favorite_movies';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'tmdb_id',
         'title',
         'poster_path',
         'overview',
         'release_date',
-        'genres',
+    ];
+
+    protected $casts = [
+        'release_date' => 'date',
     ];
 
     /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
+     * Os gêneros que pertencem ao filme.
      */
-    protected $casts = [
-        'genres' => 'array',
-        'release_date' => 'date',
-    ];
+    public function genres()
+    {
+        return $this->belongsToMany(Genre::class, 'favorite_movie_genre');
+    }
 }

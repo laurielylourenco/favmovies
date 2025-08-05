@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('poster_path')->nullable(); 
             $table->text('overview'); 
             $table->date('release_date')->nullable(); 
-            $table->json('genres'); 
+           // $table->json('genres'); 
             $table->timestamps(); 
         });
     }
