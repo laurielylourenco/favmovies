@@ -22,6 +22,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 //filmes na API do TMDB 
 Route::get('/movies/search', [MovieController::class, 'search']);
+Route::get('/movies/discover', [MovieController::class, 'discoverMovie']);
 //CRUD
 Route::post('/favorites', [MovieController::class, 'store']); 
 Route::get('/favorites', [MovieController::class, 'index']); 
