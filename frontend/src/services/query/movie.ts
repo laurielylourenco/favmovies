@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { fetchMoviesDiscover, fetchMoviesSearchName } from "../api/movies";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { addFavoriteMovie, fetchMoviesDiscover, fetchMoviesSearchName, removeFavoriteMovie } from "../api/movies";
 
 export function useMoviesDiscover() {
   return useQuery({
@@ -17,5 +17,36 @@ export function useMoviesSearchName(name: string) {
     queryFn: () => fetchMoviesSearchName(name),
     enabled: !!name, 
     staleTime: 1000 * 60 * 2, 
+  });
+}
+
+
+
+export function useAddFavoriteMovie() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: addFavoriteMovie,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["favorites"] });
+    },
+    onError: (error) => {
+      console.error("Erro ao adicionar favorito:", error);
+    },
+  });
+}
+
+
+export function useRemoveFavoriteMovie() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: number) => removeFavoriteMovie(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["favorites"] });
+    },
+    onError: (error) => {
+      console.error("Erro ao remover favorito:", error);
+    },
   });
 }

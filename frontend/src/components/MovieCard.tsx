@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Movie } from '@/data/movies';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useToast } from '@/hooks/use-toast';
+import { useAddFavoriteMovie, useRemoveFavoriteMovie } from '../services/query/movie';
 
 interface MovieCardProps {
   movie: Movie;
@@ -13,20 +14,70 @@ interface MovieCardProps {
 export const MovieCard = ({ movie }: MovieCardProps) => {
   const { addToFavorites, removeFromFavorites, isFavorite } = useFavorites();
   const { toast } = useToast();
+  const { mutate: addFavorite, isPending } = useAddFavoriteMovie();
+  const { mutate: removeFavorite, isPending: isRemoving } = useRemoveFavoriteMovie();
+
   const favorite = isFavorite(movie.id);
 
   const handleFavoriteClick = () => {
     if (favorite) {
+
       removeFromFavorites(movie.id);
+
+      removeFavorite(movie.id, {
+        onSuccess: () => {
+          toast({
+            title: "Removido dos favoritos",
+            description: `${movie.title} foi removido da sua lista de favoritos.`,
+          });
+        },
+        onError: () => {
+          toast({
+            title: "Erro",
+            description: "Não foi possível remover dos favoritos. Tente novamente.",
+            variant: "destructive",
+          });
+        },
+      });
+
       toast({
         title: "Removido dos favoritos",
         description: `${movie.title} foi removido da sua lista de favoritos.`,
       });
     } else {
       addToFavorites(movie);
-      toast({
-        title: "Adicionado aos favoritos",
-        description: `${movie.title} foi adicionado à sua lista de favoritos.`,
+
+      const favoriteData = {
+        adult: movie?.adult,
+        backdrop_path: movie?.backdrop_path ?? "",
+        genre_ids: movie?.genre_ids ?? [],
+        tmdb_id: movie?.id,
+        original_language: movie?.original_language,
+        original_title: movie?.original_title,
+        overview: movie?.overview ?? "Sem resenha",
+        popularity: movie?.popularity,
+        poster_path: movie?.poster_path,
+        release_date: movie?.release_date,
+        title: movie?.title,
+        video: movie?.video,
+        vote_average: movie?.vote_average,
+        vote_count: movie?.vote_count,
+      };
+
+      addFavorite(favoriteData, {
+        onSuccess: () => {
+          toast({
+            title: "Adicionado aos favoritos",
+            description: `${movie.title} foi adicionado à sua lista de favoritos.`,
+          });
+        },
+        onError: () => {
+          toast({
+            title: "Erro",
+            description: "Não foi possível adicionar aos favoritos. Tente novamente.",
+            variant: "destructive",
+          });
+        },
       });
     }
   };
@@ -51,9 +102,11 @@ export const MovieCard = ({ movie }: MovieCardProps) => {
           size="icon"
           className="absolute top-2 right-2 bg-black/50 hover:bg-black/70"
           onClick={handleFavoriteClick}
+          disabled={isPending} 
         >
           <Heart
-            className={`h-4 w-4 ${favorite ? 'fill-red-500 text-red-500' : 'text-white'}`}
+            className={`h-4 w-4 ${favorite ? 'fill-red-500 text-red-500' : 'text-white'
+              }`}
           />
         </Button>
       </div>
@@ -63,7 +116,9 @@ export const MovieCard = ({ movie }: MovieCardProps) => {
 
         <div className="flex items-center gap-2 mb-2">
           <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-          <span className="text-sm font-medium">{movie.vote_average.toFixed(1)}</span>
+          <span className="text-sm font-medium">
+            {movie.vote_average.toFixed(1)}
+          </span>
           <span className="text-sm text-muted-foreground">
             ({new Date(movie.release_date).getFullYear()})
           </span>
@@ -78,7 +133,7 @@ export const MovieCard = ({ movie }: MovieCardProps) => {
         </div>
 
         <p className="text-sm text-muted-foreground line-clamp-3">
-          {movie.overview}
+          {movie.overview.length === 0 ? "Sem resenha" : movie.overview}
         </p>
       </CardContent>
     </Card>
