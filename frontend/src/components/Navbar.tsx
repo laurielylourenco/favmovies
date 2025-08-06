@@ -11,7 +11,7 @@ export const Navbar = () => {
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Film className="h-6 w-6" />
-          <h1 className="text-xl font-bold">MovieApp</h1>
+          <h1 className="text-xl font-bold">FavMovies</h1>
         </div>
         
         <div className="flex items-center gap-2">

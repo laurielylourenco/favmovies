@@ -34,26 +34,33 @@ export const MovieCard = ({ movie }: MovieCardProps) => {
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
       <div className="relative">
-        <img
-          src={movie.poster_path}
-          alt={movie.title}
-          className="w-full h-64 object-cover"
-        />
+        {movie.backdrop_path ? (
+          <img
+            src={`https://image.tmdb.org/t/p/w500/${movie.backdrop_path}`}
+            alt={movie.title}
+            className="w-full h-64 object-cover"
+          />
+        ) : (
+          <div className="w-full h-64 flex items-center justify-center bg-gray-300 text-gray-600 text-sm">
+            Sem imagem
+          </div>
+        )}
+
         <Button
           variant="ghost"
           size="icon"
           className="absolute top-2 right-2 bg-black/50 hover:bg-black/70"
           onClick={handleFavoriteClick}
         >
-          <Heart 
-            className={`h-4 w-4 ${favorite ? 'fill-red-500 text-red-500' : 'text-white'}`} 
+          <Heart
+            className={`h-4 w-4 ${favorite ? 'fill-red-500 text-red-500' : 'text-white'}`}
           />
         </Button>
       </div>
-      
+
       <CardContent className="p-4">
         <h3 className="font-semibold text-lg mb-2 line-clamp-2">{movie.title}</h3>
-        
+
         <div className="flex items-center gap-2 mb-2">
           <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
           <span className="text-sm font-medium">{movie.vote_average.toFixed(1)}</span>
@@ -63,7 +70,7 @@ export const MovieCard = ({ movie }: MovieCardProps) => {
         </div>
 
         <div className="flex flex-wrap gap-1 mb-3">
-          {movie.genres.slice(0, 2).map((genre) => (
+          {movie.genre_ids.slice(0, 2).map((genre) => (
             <Badge key={genre} variant="secondary" className="text-xs">
               {genre}
             </Badge>
