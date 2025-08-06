@@ -14,12 +14,9 @@ class MovieController extends Controller
     {
         $query = \App\Models\FavoriteMovie::query()->with('genres');
 
-        // Verifica se um parâmetro 'genre' foi enviado na requisição
         if ($request->has('genre')) {
             $genreName = $request->input('genre');
 
-            // Adiciona uma condição para buscar apenas filmes que TENHAM ('whereHas')
-            // um gênero relacionado cujo nome seja o especificado.
             $query->whereHas('genres', function ($q) use ($genreName) {
                 $q->where('name', $genreName);
             });
