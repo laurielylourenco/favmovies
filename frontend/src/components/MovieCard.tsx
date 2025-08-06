@@ -1,0 +1,79 @@
+import { Heart, Star } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Movie } from '@/data/movies';
+import { useFavorites } from '@/hooks/useFavorites';
+import { useToast } from '@/hooks/use-toast';
+
+interface MovieCardProps {
+  movie: Movie;
+}
+
+export const MovieCard = ({ movie }: MovieCardProps) => {
+  const { addToFavorites, removeFromFavorites, isFavorite } = useFavorites();
+  const { toast } = useToast();
+  const favorite = isFavorite(movie.id);
+
+  const handleFavoriteClick = () => {
+    if (favorite) {
+      removeFromFavorites(movie.id);
+      toast({
+        title: "Removido dos favoritos",
+        description: `${movie.title} foi removido da sua lista de favoritos.`,
+      });
+    } else {
+      addToFavorites(movie);
+      toast({
+        title: "Adicionado aos favoritos",
+        description: `${movie.title} foi adicionado à sua lista de favoritos.`,
+      });
+    }
+  };
+
+  return (
+    <Card className="overflow-hidden hover:shadow-lg transition-shadow">
+      <div className="relative">
+        <img
+          src={movie.poster_path}
+          alt={movie.title}
+          className="w-full h-64 object-cover"
+        />
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute top-2 right-2 bg-black/50 hover:bg-black/70"
+          onClick={handleFavoriteClick}
+        >
+          <Heart 
+            className={`h-4 w-4 ${favorite ? 'fill-red-500 text-red-500' : 'text-white'}`} 
+          />
+        </Button>
+      </div>
+      
+      <CardContent className="p-4">
+        <h3 className="font-semibold text-lg mb-2 line-clamp-2">{movie.title}</h3>
+        
+        <div className="flex items-center gap-2 mb-2">
+          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+          <span className="text-sm font-medium">{movie.vote_average.toFixed(1)}</span>
+          <span className="text-sm text-muted-foreground">
+            ({new Date(movie.release_date).getFullYear()})
+          </span>
+        </div>
+
+        <div className="flex flex-wrap gap-1 mb-3">
+          {movie.genres.slice(0, 2).map((genre) => (
+            <Badge key={genre} variant="secondary" className="text-xs">
+              {genre}
+            </Badge>
+          ))}
+        </div>
+
+        <p className="text-sm text-muted-foreground line-clamp-3">
+          {movie.overview}
+        </p>
+      </CardContent>
+    </Card>
+  );
+};
