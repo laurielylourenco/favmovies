@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\MovieController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,3 +18,12 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+
+//filmes na API do TMDB 
+Route::get('/movies/search', [MovieController::class, 'search']);
+Route::get('/movies/discover', [MovieController::class, 'discoverMovie']);
+//CRUD
+Route::post('/favorites', [MovieController::class, 'store']); 
+Route::get('/favorites', [MovieController::class, 'index']); 
+Route::delete('/favorites/{tmdb_id}', [MovieController::class, 'destroy']);  
