@@ -3,13 +3,27 @@ import { Heart } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 import { MovieCard } from '@/components/MovieCard';
 import { GenreFilter } from '@/components/GenreFilter';
-import { useFavorites } from '@/hooks/useFavorites';
+import { useFavoritesQuery } from '../services/query/movie'; 
 
 export const Favorites = () => {
-  const { favorites, getFavoritesByGenre } = useFavorites();
+  const { data: favorites = [], isLoading } = useFavoritesQuery();
   const [selectedGenre, setSelectedGenre] = useState<number | undefined>();
 
-  const filteredFavorites = getFavoritesByGenre(selectedGenre);
+
+  const filteredFavorites = selectedGenre
+    ? favorites.filter((movie: any) => movie.genres.some((g: any) => g.id === selectedGenre))
+    : favorites;
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <div className="container mx-auto px-4 py-8 text-center">
+          <p className="text-muted-foreground">Carregando seus favoritos...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -54,8 +68,12 @@ export const Favorites = () => {
             )}
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredFavorites.map((movie) => (
-                <MovieCard key={movie.id} movie={movie} />
+              {filteredFavorites.map((movie: any) => (
+                <MovieCard 
+                  key={movie.id} 
+                  movie={movie} 
+                  isFavorited={true} 
+                />
               ))}
             </div>
 

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { SearchBar } from "@/components/SearchBar";
 import { MovieCard } from "@/components/MovieCard";
 import { Navbar } from "@/components/Navbar";
-import { useMoviesDiscover, useMoviesSearchName } from "../services/query/movie";
+import { useMoviesDiscover, useMoviesSearchName, useFavoritesQuery } from "../services/query/movie"; // 1. Importe o novo hook
 
 export const Search = () => {
   const [query, setQuery] = useState("");
@@ -19,6 +19,10 @@ export const Search = () => {
     isError: isErrorDiscover,
   } = useMoviesDiscover();
 
+  const { data: favorites } = useFavoritesQuery();
+
+  const favoriteIds = new Set(favorites?.map((fav: any) => fav.tmdb_id) || []);
+
   const handleSearch = (searchQuery: string) => {
     setQuery(searchQuery.trim());
   };
@@ -27,6 +31,8 @@ export const Search = () => {
   const moviesToDisplay = isSearching
     ? searchData?.results || []
     : discoverData?.results || [];
+
+  const isLoading = (isSearching && isLoadingSearch) || (!isSearching && isLoadingDiscover);
 
   return (
     <div className="min-h-screen bg-background">
@@ -55,8 +61,7 @@ export const Search = () => {
           )}
         </div>
 
-        {((isSearching && isLoadingSearch) ||
-          (!isSearching && isLoadingDiscover)) && (
+        {isLoading && (
           <p className="text-muted-foreground">Carregando...</p>
         )}
 
@@ -66,7 +71,11 @@ export const Search = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {moviesToDisplay.map((movie: any) => (
-            <MovieCard key={movie.id} movie={movie} />
+            <MovieCard 
+              key={movie.id} 
+              movie={movie} 
+              isFavorited={favoriteIds.has(movie.id)} 
+            />
           ))}
         </div>
       </div>
