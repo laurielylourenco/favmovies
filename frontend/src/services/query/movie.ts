@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { addFavoriteMovie, fetchMoviesDiscover, fetchMoviesSearchName, removeFavoriteMovie } from "../api/movies";
+import { addFavoriteMovie, fetchFavorites, fetchMoviesDiscover, fetchMoviesSearchName, removeFavoriteMovie } from "../api/movies";
 
 export function useMoviesDiscover() {
   return useQuery({
@@ -48,5 +48,14 @@ export function useRemoveFavoriteMovie() {
     onError: (error) => {
       console.error("Erro ao remover favorito:", error);
     },
+  });
+}
+
+
+export function useFavoritesQuery() {
+  return useQuery({
+    queryKey: ['favorites'],
+    queryFn: fetchFavorites,
+    staleTime: 1000 * 60 * 5,
   });
 }
