@@ -13,6 +13,7 @@ export async function fetchMoviesDiscover() {
 
     try {
         const response = await instance.get('/api/movies/discover');
+        console.log("fetchMoviesDiscover:  ",response.data)
         return response.data;
     } catch (error) {
         console.error("Erro ao buscar dados:", error);
@@ -25,6 +26,8 @@ export async function fetchMoviesSearchName(nome: string) {
 
     try {
         const response = await instance.get('/api/movies/search?query=' + nome);
+
+        console.log("fetchMoviesSearchName:  ",response.data)
         return response.data;
     } catch (error) {
         console.error("Erro ao buscar dados:", error);
@@ -82,6 +85,7 @@ export async function fetchFavorites() {
             },
         });
 
+        //console.log("fetchFavorites:  ",response.data)
         return response.data;
 
     } catch (error) {

@@ -8,7 +8,7 @@ import { useAddFavoriteMovie, useRemoveFavoriteMovie } from '../services/query/m
 
 interface MovieCardProps {
   movie: Movie;
-  isFavorited: boolean; 
+  isFavorited: boolean;
 }
 
 export const MovieCard = ({ movie, isFavorited }: MovieCardProps) => {
@@ -16,7 +16,7 @@ export const MovieCard = ({ movie, isFavorited }: MovieCardProps) => {
   const { mutate: addFavorite, isPending: isAdding } = useAddFavoriteMovie();
   const { mutate: removeFavorite, isPending: isRemoving } = useRemoveFavoriteMovie();
 
-  const tmdbId = 'tmdb_id' in movie ? movie.tmdb_id : movie.id;
+  const tmdbId = 'tmdb_id' in movie ? movie.tmdb_id : 0;
 
   const handleFavoriteClick = () => {
     if (isFavorited) {
@@ -43,6 +43,7 @@ export const MovieCard = ({ movie, isFavorited }: MovieCardProps) => {
         overview: movie.overview,
         release_date: movie.release_date,
         genre_ids: movie.genre_ids,
+        vote_average: movie?.vote_average
       };
 
       addFavorite(favoriteData, {
@@ -63,12 +64,15 @@ export const MovieCard = ({ movie, isFavorited }: MovieCardProps) => {
     }
   };
 
+  const genresOb = movie?.genres?.map((genre: any) => genre.name);
+  console.log('MovieCard genresOb: ', genresOb)
+
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
       <div className="relative">
-        {movie.backdrop_path ? (
+        {movie.backdrop_path || movie.poster_path ? (
           <img
-            src={`https://image.tmdb.org/t/p/w500/${movie.backdrop_path}`}
+            src={`https://image.tmdb.org/t/p/w500/${movie.backdrop_path ?? movie.poster_path}`}
             alt={movie.title}
             className="w-full h-64 object-cover"
           />
@@ -105,15 +109,20 @@ export const MovieCard = ({ movie, isFavorited }: MovieCardProps) => {
         </div>
 
         <div className="flex flex-wrap gap-1 mb-3">
-          {movie?.genre_ids?.slice(0, 2).map((genre) => (
-            <Badge key={genre} variant="secondary" className="text-xs">
-              {genre}
+          {movie?.genres?.map((genre: any, index) => (
+
+
+            <Badge key={index} variant="secondary" className="text-xs">
+              {genre.name}
             </Badge>
+
+
           ))}
+          
         </div>
 
         <p className="text-sm text-muted-foreground line-clamp-3">
-          {movie.overview.length === 0 ? "Sem resenha" : movie.overview}
+          {movie?.overview?.length === 0 || movie.overview == null ? "Sem resenha" : movie.overview}
         </p>
       </CardContent>
     </Card>

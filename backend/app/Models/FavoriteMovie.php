@@ -17,6 +17,7 @@ class FavoriteMovie extends Model
         'poster_path',
         'overview',
         'release_date',
+        'vote_average'
     ];
 
     protected $casts = [

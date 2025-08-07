@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Http;
 class MovieController extends Controller
 {
 
-
     public function index(Request $request)
     {
         $query = \App\Models\FavoriteMovie::query()->with('genres');
@@ -53,7 +52,10 @@ class MovieController extends Controller
             ]);
 
 
-        return $resp->json();
+        $moviesWithGenres = $this->addGenreNamesToMovies($resp->json());
+
+        return response()->json($moviesWithGenres);
+        // return $resp->json();
     }
 
 
@@ -73,24 +75,28 @@ class MovieController extends Controller
                 'include_adult' => false,
                 'include_video' => false,
                 'sort_by' => 'popularity.desc',
-                'page' => 1
+                'page' => mt_rand(1, 20)
             ]);
 
 
-        return $resp->json();
+
+        $moviesWithGenres = $this->addGenreNamesToMovies($resp->json());
+
+        return response()->json($moviesWithGenres);
     }
 
 
     public function store(Request $request)
     {
-        
+
         $validated = $request->validate([
             'tmdb_id' => 'required|integer|unique:favorite_movies,tmdb_id',
             'title' => 'required|string',
             'poster_path' => 'nullable|string',
-            'overview' => 'required|string',
             'release_date' => 'nullable|date',
             'genre_ids' => 'required|array',
+            'vote_average' => 'required|numeric',
+            'overview' => 'nullable|string'
         ]);
 
         $genreMap = $this->getGenreMap();
@@ -98,7 +104,7 @@ class MovieController extends Controller
         $genresData = collect($validated['genre_ids'])->map(function ($id) use ($genreMap) {
             return [
                 'tmdb_id' => $id,
-                'name' => $genreMap[$id] ?? 'Desconhecido' 
+                'name' => $genreMap[$id] ?? 'Desconhecido'
             ];
         });
 
@@ -110,8 +116,7 @@ class MovieController extends Controller
         });
 
         $favoriteMovie = \App\Models\FavoriteMovie::create($validated);
-
-        // Anexar os gêneros ao filme 
+ 
         $favoriteMovie->genres()->sync($genreIdsInDb);
 
         return response()->json($favoriteMovie->load('genres'), 201);
@@ -137,6 +142,27 @@ class MovieController extends Controller
     {
         $movie = \App\Models\FavoriteMovie::where('tmdb_id', $tmdb_id)->firstOrFail();
         $movie->delete();
-        return response()->json(null, 204); 
+        return response()->json(null, 204);
+    }
+
+
+    private function addGenreNamesToMovies(array $moviesResponse): array
+    {
+        $genreMap = $this->getGenreMap();
+        $movies = $moviesResponse['results'] ?? [];
+
+        $transform = collect($movies)->map(function ($movie) use ($genreMap) {
+            $genreIds = $movie['genre_ids'] ?? [];
+            $movie['genres'] = collect($genreIds)->map(function ($id) use ($genreMap) {
+                return [
+                    'id' => $id,
+                    'name' => $genreMap[$id] ?? 'Desconhecido'
+                ];
+            })->all();
+
+            return $movie;
+        });
+        $moviesResponse['results'] = $transform;
+        return $moviesResponse;
     }
 }

@@ -10,9 +10,14 @@ export const Favorites = () => {
   const [selectedGenre, setSelectedGenre] = useState<number | undefined>();
 
 
-  const filteredFavorites = selectedGenre
+ /*  const filteredFavorites = selectedGenre
     ? favorites.filter((movie: any) => movie.genres.some((g: any) => g.id === selectedGenre))
+    : favorites; */
+
+    const filteredFavorites = selectedGenre
+    ? favorites.filter((movie: any) => movie.genres.some((g: any) => g.tmdb_id === selectedGenre)) // Mude de g.id para g.tmdb_id
     : favorites;
+
 
   if (isLoading) {
     return (
