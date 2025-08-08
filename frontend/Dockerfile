@@ -1,17 +1,28 @@
-
+# Estágio 1: Build da Aplicação React
 FROM node:20-alpine AS build
-
 
 WORKDIR /app
 
-
-COPY package.json package-lock.json ./
-
+# CORREÇÃO: Especifique o caminho a partir da raiz do projeto
+COPY frontend/package.json frontend/package-lock.json ./
 
 RUN npm install
 
+# CORREÇÃO: Especifique o caminho a partir da raiz do projeto
+COPY frontend/. .
 
-COPY . .
+RUN npm run build
 
 
-CMD ["npm", "run", "dev", "--", "--host"]
+# Estágio 2: Servir os Arquivos com Nginx
+FROM nginx:alpine
+
+COPY --from=build /app/dist /usr/share/nginx/html
+
+RUN rm /etc/nginx/conf.d/default.conf
+
+# Esta linha continua correta porque o contexto do build é a raiz
+COPY docker/frontend/nginx.conf /etc/nginx/conf.d
+
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

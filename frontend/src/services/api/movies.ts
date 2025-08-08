@@ -13,7 +13,6 @@ export async function fetchMoviesDiscover() {
 
     try {
         const response = await instance.get('/api/movies/discover');
-        console.log("fetchMoviesDiscover:  ",response.data)
         return response.data;
     } catch (error) {
         console.error("Erro ao buscar dados:", error);
