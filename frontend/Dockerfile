@@ -3,12 +3,12 @@ FROM node:20-alpine AS build
 
 WORKDIR /app
 
-# CORREÇÃO: Especifique o caminho a partir da raiz do projeto
+
 COPY frontend/package.json frontend/package-lock.json ./
 
 RUN npm install
 
-# CORREÇÃO: Especifique o caminho a partir da raiz do projeto
+
 COPY frontend/. .
 
 RUN npm run build
@@ -21,7 +21,7 @@ COPY --from=build /app/dist /usr/share/nginx/html
 
 RUN rm /etc/nginx/conf.d/default.conf
 
-# Esta linha continua correta porque o contexto do build é a raiz
+
 COPY docker/frontend/nginx.conf /etc/nginx/conf.d
 
 EXPOSE 80
