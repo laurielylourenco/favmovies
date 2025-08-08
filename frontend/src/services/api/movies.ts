@@ -26,8 +26,6 @@ export async function fetchMoviesSearchName(nome: string) {
 
     try {
         const response = await instance.get('/api/movies/search?query=' + nome);
-
-        console.log("fetchMoviesSearchName:  ",response.data)
         return response.data;
     } catch (error) {
         console.error("Erro ao buscar dados:", error);
@@ -84,8 +82,6 @@ export async function fetchFavorites() {
                 "Content-Type": "application/json",
             },
         });
-
-        //console.log("fetchFavorites:  ",response.data)
         return response.data;
 
     } catch (error) {

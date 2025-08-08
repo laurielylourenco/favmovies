@@ -64,9 +64,6 @@ export const MovieCard = ({ movie, isFavorited }: MovieCardProps) => {
     }
   };
 
-  const genresOb = movie?.genres?.map((genre: any) => genre.name);
-  console.log('MovieCard genresOb: ', genresOb)
-
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
       <div className="relative">

@@ -8,7 +8,8 @@ if [ ! -d "vendor" ]; then
 fi
 
 
-chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
+echo "Rodando as migrações do banco de dados..."
+php artisan migrate --force
 
 # Executa o comando principal do contêiner (php-fpm)
 exec "$@"
