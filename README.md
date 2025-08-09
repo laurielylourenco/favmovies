@@ -1,4 +1,6 @@
 # Fav movies
+
+![imagem fav movies](image.png)
 Esta é uma aplicação de catálogo de filmes que permite buscar filmes na API do The Movie Database (TMDB) e gerenciar uma lista local de favoritos.
 
 ## Tecnologias Utilizadas
@@ -13,6 +15,7 @@ Esta é uma aplicação de catálogo de filmes que permite buscar filmes na API 
 ## Como rodar o projeto localmente com Docker
 
 O ambiente da aplicação é 100% containerizado com Docker, garantindo que o setup seja simples e rápido, com um único comando.
+Clonar em diretórios de sistema como /var/www/ pode causar erros de permissão do Docker.
 
 ### Pré-requisitos
 
@@ -97,6 +100,7 @@ A aplicação pode ser testada manualmente através da interface do usuário no 
 5.  **Visualizar Favoritos:** Clique no botão "Favoritos" no cabeçalho. A página de favoritos exibirá todos os filmes que você adicionou.
 6.  **Filtrar Favoritos:** Na página de favoritos, use o seletor "Filtrar por gênero" para visualizar apenas os filmes de um gênero específico.
 7.  **Remover um Favorito:** Tanto na página de busca quanto na de favoritos, clique no ícone de coração preenchido (❤️) de um filme já favoritado para removê-lo da sua lista.
+8. **Filmes sem gênero**: Filmes retornados pela API que não possuem gêneros definidos não podem ser adicionados à lista de favoritos.
 
 ## Link para obter a chave da API do TMDB
 
@@ -109,7 +113,3 @@ Para utilizar a funcionalidade de busca, é obrigatório ter uma chave de API do
     3.  No menu lateral, clique na seção `API`.
     4.  Crie uma nova chave de API (pode ser necessário preencher um breve formulário sobre o uso).
     5.  Copie a sua "Chave da API" e cole no arquivo `backend/.env`.
-
-## Como subir o frontend separado
-
-Este projeto foi configurado para ser iniciado com um único comando (`docker-compose up`). Portanto, **não é necessário iniciar o frontend separadamente** se você estiver usando o Docker.

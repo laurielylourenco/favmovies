@@ -48,6 +48,8 @@ class MovieController extends Controller
             ->get('https://api.themoviedb.org/3/search/movie', [
                 'api_key' => $apiKey,
                 'query' => $query,
+                'include_adult' => false,
+                'include_video' => false,
                 'language' => 'pt-BR',
             ]);
 
@@ -55,7 +57,6 @@ class MovieController extends Controller
         $moviesWithGenres = $this->addGenreNamesToMovies($resp->json());
 
         return response()->json($moviesWithGenres);
-        // return $resp->json();
     }
 
 
@@ -75,7 +76,7 @@ class MovieController extends Controller
                 'include_adult' => false,
                 'include_video' => false,
                 'sort_by' => 'popularity.desc',
-                'page' => mt_rand(1, 20)
+                'page' => mt_rand(1, 10)
             ]);
 
 

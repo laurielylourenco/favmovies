@@ -18,7 +18,12 @@ export const MovieCard = ({ movie, isFavorited }: MovieCardProps) => {
 
   const tmdbId = 'tmdb_id' in movie ? movie.tmdb_id : 0;
 
+  const hasGenres = movie.genre_ids && movie.genre_ids.length > 0;
+
   const handleFavoriteClick = () => {
+
+    if (!hasGenres) return;
+
     if (isFavorited) {
       removeFavorite(tmdbId, {
         onSuccess: () => {
@@ -84,7 +89,7 @@ export const MovieCard = ({ movie, isFavorited }: MovieCardProps) => {
           size="icon"
           className="absolute top-2 right-2 bg-black/50 hover:bg-black/70"
           onClick={handleFavoriteClick}
-          disabled={isAdding || isRemoving}
+          disabled={isAdding || isRemoving || !hasGenres}
         >
           <Heart
             className={`h-4 w-4 ${isFavorited ? 'fill-red-500 text-red-500' : 'text-white'}`}
